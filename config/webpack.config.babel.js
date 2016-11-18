@@ -31,7 +31,7 @@ const config = {
       favicon: 'src/favicon.ico',
       filename: 'index.html',
       template: 'src/static/index.html',
-      title: 'React Component Builder',
+      title: 'Elm SPA Starter Kit',
     }),
     new webpack.LoaderOptionsPlugin({
       options: {
