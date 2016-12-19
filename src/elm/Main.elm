@@ -83,9 +83,9 @@ router location model =
     if model.location.hash == "#/about" then
         Html.map (\x -> Noop) (Page.About.View.view Page.About.View.None)
     else if model.location.hash == "#/home" then
-        Html.map HomeMsg (Page.Home.View.view Page.Home.View.model)
+        Html.map HomeMsg (Page.Home.View.view model.home)
     else
-        Html.map HomeMsg (Page.Home.View.view Page.Home.View.model)
+        Html.map HomeMsg (Page.Home.View.view model.home)
 
 
 

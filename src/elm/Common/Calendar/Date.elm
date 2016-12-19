@@ -61,4 +61,4 @@ view model =
     in
         div
             [ class className, onClick OnClick ]
-            [ text (toString (Date.day (model.date))) ]
+            [ text (toString (Date.day (model.date))), text (toString model.isSelected) ]

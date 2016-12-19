@@ -38,7 +38,7 @@ model =
                 , isInMonthRange = True
                 }
     in
-        List.map (\n -> (getInitCalendarDate 12 n)) (List.range 1 7)
+        List.map (\n -> (getInitCalendarDate 12 n)) (List.range 1 2)
 
 
 type Msg
