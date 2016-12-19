@@ -23,7 +23,9 @@ main =
 
 init : Navigation.Location -> ( Model, Cmd Msg )
 init location =
-    ( Model location
+    ( { location = location
+      , home = Page.Home.View.model
+      }
     , Cmd.none
     )
 
@@ -34,6 +36,7 @@ init location =
 
 type alias Model =
     { location : Navigation.Location
+    , home : Page.Home.View.Model
     }
 
 
@@ -52,6 +55,7 @@ subscriptions model =
 
 type Msg
     = UrlChange Navigation.Location
+    | HomeMsg Page.Home.View.Msg
     | Noop
 
 
@@ -62,6 +66,9 @@ update msg model =
             ( { model | location = location }
             , Cmd.none
             )
+
+        HomeMsg subMsg ->
+            ( { model | home = Page.Home.View.update subMsg model.home }, Cmd.none )
 
         Noop ->
             ( model, Cmd.none )
@@ -76,9 +83,9 @@ router location model =
     if model.location.hash == "#/about" then
         Html.map (\x -> Noop) (Page.About.View.view Page.About.View.None)
     else if model.location.hash == "#/home" then
-        Html.map (\x -> Noop) (Page.Home.View.view Page.Home.View.None)
+        Html.map HomeMsg (Page.Home.View.view Page.Home.View.model)
     else
-        Html.map (\x -> Noop) (Page.Home.View.view Page.Home.View.None)
+        Html.map HomeMsg (Page.Home.View.view Page.Home.View.model)
 
 
 

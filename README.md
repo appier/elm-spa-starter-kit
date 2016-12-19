@@ -1,6 +1,10 @@
 # Elm SPA Starter Kit
 
-##WIP
+
+### TDOO
+
+* CSS Module
+* Better router handling
 
 
 
