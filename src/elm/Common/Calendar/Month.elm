@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Common.Calendar.Date exposing (..)
 import Common.Calendar.Model exposing (Month, Week, CalendarDate)
-import Time.Date exposing (Date, date, addMonths, addDays, weekday)
+import Time.Date exposing (Date, Weekday, date, addMonths, addDays, weekday, daysInMonth)
 
 
 type alias Model =
@@ -33,6 +33,31 @@ generateWeekListByDate date =
         (List.range 0 6)
 
 
+dayFromSunDay : Weekday -> Int
+dayFromSunDay weekDay =
+    case weekDay of
+        Time.Date.Mon ->
+            1
+
+        Time.Date.Tue ->
+            2
+
+        Time.Date.Wed ->
+            3
+
+        Time.Date.Thu ->
+            4
+
+        Time.Date.Fri ->
+            5
+
+        Time.Date.Sat ->
+            6
+
+        Time.Date.Sun ->
+            0
+
+
 getFirstDateOfWeek : Date -> Date
 getFirstDateOfWeek date =
     let
@@ -40,35 +65,26 @@ getFirstDateOfWeek date =
             weekday date
 
         adjustDay =
-            case weekDay of
-                Time.Date.Mon ->
-                    -1
-
-                Time.Date.Tue ->
-                    -2
-
-                Time.Date.Wed ->
-                    -3
-
-                Time.Date.Thu ->
-                    -4
-
-                Time.Date.Fri ->
-                    -5
-
-                Time.Date.Sat ->
-                    -6
-
-                Time.Date.Sun ->
-                    0
+            -1 * dayFromSunDay weekDay
     in
         addDays adjustDay date
 
 
-getWeekNumByByYearAndMonth : Date -> Int
-getWeekNumByByYearAndMonth date =
-    -- TODO..
-    10
+getWeekNumByByYearAndMonth : Int -> Int -> Int
+getWeekNumByByYearAndMonth year month =
+    let
+        firstDateOfMonth =
+            date year month 1
+
+        days =
+            daysInMonth year month
+    in
+        case days of
+            Just num ->
+                ceiling (toFloat (num + (dayFromSunDay (weekday firstDateOfMonth))) / 7)
+
+            Nothing ->
+                6
 
 
 getMonthModelByYearAndMonth : Int -> Int -> Month
@@ -82,7 +98,7 @@ getMonthModelByYearAndMonth year month =
             getFirstDateOfWeek firstDateOfMonth
 
         weekNum =
-            getWeekNumByByYearAndMonth firstDateOfMonth
+            getWeekNumByByYearAndMonth year month
 
         weeks =
             List.map
@@ -96,7 +112,7 @@ getMonthModelByYearAndMonth year month =
 
 model : Model
 model =
-    getMonthModelByYearAndMonth 2016 12
+    getMonthModelByYearAndMonth 2016 10
 
 
 type Msg
