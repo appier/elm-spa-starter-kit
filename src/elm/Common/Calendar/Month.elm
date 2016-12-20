@@ -3,7 +3,7 @@ module Common.Calendar.Month exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Common.Calendar.Date exposing (..)
-import Common.Calendar.Model exposing (Month, Week, CalendarDate)
+import Common.Calendar.Model exposing (Month, Week, CalendarDate, dayFromSunDay, getWeekDayStr, weekDays)
 import Time.Date exposing (Date, Weekday, date, addMonths, addDays, weekday, daysInMonth)
 
 
@@ -31,31 +31,6 @@ generateWeekListByDate date =
                 |> createCalendarDateByDate
         )
         (List.range 0 6)
-
-
-dayFromSunDay : Weekday -> Int
-dayFromSunDay weekDay =
-    case weekDay of
-        Time.Date.Mon ->
-            1
-
-        Time.Date.Tue ->
-            2
-
-        Time.Date.Wed ->
-            3
-
-        Time.Date.Thu ->
-            4
-
-        Time.Date.Fri ->
-            5
-
-        Time.Date.Sat ->
-            6
-
-        Time.Date.Sun ->
-            0
 
 
 getFirstDateOfWeek : Date -> Date
@@ -112,7 +87,7 @@ getMonthModelByYearAndMonth year month =
 
 model : Model
 model =
-    getMonthModelByYearAndMonth 2016 10
+    getMonthModelByYearAndMonth 2016 12
 
 
 type Msg
@@ -147,7 +122,23 @@ view model =
                     (\x -> (Html.map (ClickDateMsg x) (Common.Calendar.Date.view x)))
                     week
                 )
+
+        getDayStr : Weekday -> Html msg
+        getDayStr day =
+            div [ class "cal-date" ]
+                [ div [ class "cal-text" ]
+                    [ text (getWeekDayStr day) ]
+                ]
     in
         div
             [ class "cal-month" ]
-            (List.map generateWeekDom model)
+            [ div [ class "cal-month-head" ]
+                [ div
+                    [ class "cal-week" ]
+                    (List.map
+                        getDayStr
+                        weekDays
+                    )
+                ]
+            , div [ class "cal-month-body" ] (List.map generateWeekDom model)
+            ]
