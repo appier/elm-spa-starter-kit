@@ -22,36 +22,59 @@ createCalendarDateByDate date =
     }
 
 
+addNDayToDate : Float -> Date -> Date
+addNDayToDate number date =
+    Date.fromTime (Date.toTime date + number * 86400 * 1000)
+
+
 generateWeekListByDate : Date -> Week
 generateWeekListByDate date =
-    let
-        addNDayToDate number =
-            Date.fromTime (Date.toTime date + number * 86400 * 1000)
-    in
-        List.map
-            (\x ->
-                x
-                    |> toFloat
-                    |> addNDayToDate
-                    |> createCalendarDateByDate
-            )
-            (List.range 0 7)
+    List.map
+        (\x ->
+            x
+                |> toFloat
+                |> flip addNDayToDate date
+                |> createCalendarDateByDate
+        )
+        (List.range 0 6)
 
 
-getDateByYearAndMonth : Int -> Int -> Month
-getDateByYearAndMonth year month =
+getNumOfDayByYearAndMonth : Int -> Int -> Int
+getNumOfDayByYearAndMonth year month =
+    -- TODO
+    1
+
+
+getWeekNumByByYearAndMonth : Int -> Int -> Int
+getWeekNumByByYearAndMonth year month =
+    -- TODO
+    20
+
+
+getMonthModelByYearAndMonth : Int -> Int -> Month
+getMonthModelByYearAndMonth year month =
     let
-        week =
+        firstDateOfMonth : Date
+        firstDateOfMonth =
             Date.fromString ("2016/" ++ (toString year) ++ "/" ++ (toString month))
                 |> Result.withDefault (Date.fromTime 0)
-                |> generateWeekListByDate
+
+        weekNum =
+            getWeekNumByByYearAndMonth year month
+
+        weeks =
+            List.map
+                (\x ->
+                    generateWeekListByDate (addNDayToDate (toFloat (x - 1) * 7) firstDateOfMonth)
+                )
+                (List.range 1 weekNum)
     in
-        [ week ]
+        weeks
 
 
 model : Model
 model =
-    getDateByYearAndMonth 2016 11
+    getMonthModelByYearAndMonth 2016 11
 
 
 type Msg

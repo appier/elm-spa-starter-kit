@@ -34,3 +34,28 @@
   }
 
 }
+
+
+
+.cal-month{
+  .cal-week{
+    display: flex;
+  }
+
+  .cal-date{
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    .cal-text{
+      width: 20px;
+      padding: 8px;
+      border-radius: 3px;
+    }
+    &.selected{
+      .cal-text{
+        background-color: #1184CE;
+        color: #fff;
+      }
+    }
+  }
+}

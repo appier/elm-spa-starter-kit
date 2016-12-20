@@ -1,5 +1,6 @@
 module Common.Calendar.Date exposing (..)
 
+import Char exposing (..)
 import Date exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -53,12 +54,53 @@ getDateDomClassName model =
         "cal-date" ++ selectedClassName ++ availableClassName ++ inMonthClassName
 
 
+toRadix : Int -> Int -> String
+toRadix r n =
+    let
+        getChr c =
+            if c < 10 then
+                toString c
+            else
+                String.fromChar <| Char.fromCode (87 + c)
+
+        getStr b =
+            if n < b then
+                getChr n
+            else
+                (toRadix r (n // b)) ++ (getChr (n % b))
+    in
+        case (r >= 2 && r <= 16) of
+            True ->
+                getStr r
+
+            False ->
+                toString n
+
+
+getDateBackgroundColor : Int -> String
+getDateBackgroundColor dateInt =
+    let
+        hex =
+            (toRadix 16 (255 - dateInt))
+    in
+        "#" ++ hex ++ hex ++ hex
+
+
 view : CalendarDate -> Html Msg
 view model =
     let
         className =
             getDateDomClassName (model)
+
+        dateNumber =
+            (Date.day (model.date))
     in
         div
-            [ class className, onClick OnClick ]
-            [ text (toString (Date.day (model.date))) ]
+            [ class className
+            , style [ ( "backgroundColor", getDateBackgroundColor dateNumber ) ]
+            , onClick
+                OnClick
+            ]
+            [ div [ class "cal-text" ]
+                [ text (toString dateNumber) ]
+            ]
