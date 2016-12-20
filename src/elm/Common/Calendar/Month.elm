@@ -1,10 +1,10 @@
 module Common.Calendar.Month exposing (..)
 
-import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Common.Calendar.Date exposing (..)
 import Common.Calendar.Model exposing (Month, Week, CalendarDate)
+import Time.Date exposing (Date, date, addMonths, addDays, weekday)
 
 
 type alias Model =
@@ -22,33 +22,53 @@ createCalendarDateByDate date =
     }
 
 
-addNDayToDate : Float -> Date -> Date
-addNDayToDate number date =
-    Date.fromTime (Date.toTime date + number * 86400 * 1000)
-
-
 generateWeekListByDate : Date -> Week
 generateWeekListByDate date =
     List.map
         (\x ->
             x
-                |> toFloat
-                |> flip addNDayToDate date
+                |> flip addDays date
                 |> createCalendarDateByDate
         )
         (List.range 0 6)
 
 
-getNumOfDayByYearAndMonth : Int -> Int -> Int
-getNumOfDayByYearAndMonth year month =
-    -- TODO
-    1
+getFirstDateOfWeek : Date -> Date
+getFirstDateOfWeek date =
+    let
+        weekDay =
+            weekday date
+
+        adjustDay =
+            case weekDay of
+                Time.Date.Mon ->
+                    -1
+
+                Time.Date.Tue ->
+                    -2
+
+                Time.Date.Wed ->
+                    -3
+
+                Time.Date.Thu ->
+                    -4
+
+                Time.Date.Fri ->
+                    -5
+
+                Time.Date.Sat ->
+                    -6
+
+                Time.Date.Sun ->
+                    0
+    in
+        addDays adjustDay date
 
 
-getWeekNumByByYearAndMonth : Int -> Int -> Int
-getWeekNumByByYearAndMonth year month =
-    -- TODO
-    20
+getWeekNumByByYearAndMonth : Date -> Int
+getWeekNumByByYearAndMonth date =
+    -- TODO..
+    10
 
 
 getMonthModelByYearAndMonth : Int -> Int -> Month
@@ -56,16 +76,18 @@ getMonthModelByYearAndMonth year month =
     let
         firstDateOfMonth : Date
         firstDateOfMonth =
-            Date.fromString ("2016/" ++ (toString year) ++ "/" ++ (toString month))
-                |> Result.withDefault (Date.fromTime 0)
+            date year month 1
+
+        firstDate =
+            getFirstDateOfWeek firstDateOfMonth
 
         weekNum =
-            getWeekNumByByYearAndMonth year month
+            getWeekNumByByYearAndMonth firstDateOfMonth
 
         weeks =
             List.map
                 (\x ->
-                    generateWeekListByDate (addNDayToDate (toFloat (x - 1) * 7) firstDateOfMonth)
+                    generateWeekListByDate (addDays ((x - 1) * 7) firstDate)
                 )
                 (List.range 1 weekNum)
     in
@@ -74,7 +96,7 @@ getMonthModelByYearAndMonth year month =
 
 model : Model
 model =
-    getMonthModelByYearAndMonth 2016 11
+    getMonthModelByYearAndMonth 2016 12
 
 
 type Msg

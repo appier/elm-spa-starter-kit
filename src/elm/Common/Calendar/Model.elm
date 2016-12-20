@@ -1,6 +1,6 @@
 module Common.Calendar.Model exposing (..)
 
-import Date exposing (..)
+import Time.Date exposing (Date)
 
 
 type alias Week =
@@ -12,7 +12,7 @@ type alias Month =
 
 
 type alias CalendarDate =
-    { date : Date.Date
+    { date : Date
     , isHoliday : Bool
     , isAvailable : Bool
     , isSelected : Bool

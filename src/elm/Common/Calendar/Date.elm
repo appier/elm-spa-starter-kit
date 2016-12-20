@@ -1,11 +1,11 @@
 module Common.Calendar.Date exposing (..)
 
 import Char exposing (..)
-import Date exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Common.Calendar.Model exposing (CalendarDate)
+import Time.Date exposing (Date, day)
 
 
 type alias Model =
@@ -93,7 +93,7 @@ view model =
             getDateDomClassName (model)
 
         dateNumber =
-            (Date.day (model.date))
+            day model.date
     in
         div
             [ class className
