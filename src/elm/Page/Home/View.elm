@@ -2,28 +2,28 @@ module Page.Home.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Common.Calendar.Week exposing (..)
-import Common.Calendar.Model exposing (CalendarDate)
+import Common.Calendar.Month exposing (..)
+import Common.Calendar.Model exposing (Month)
 
 
 type alias Model =
-    List CalendarDate
+    Month
 
 
-model : List CalendarDate
+model : Month
 model =
-    Common.Calendar.Week.model
+    Common.Calendar.Month.model
 
 
 type Msg
-    = ClickDateMsg Common.Calendar.Week.Msg
+    = ClickDateMsg Common.Calendar.Month.Msg
 
 
 update : Msg -> Model -> Model
 update message model =
     case message of
         ClickDateMsg subMsg ->
-            Common.Calendar.Week.update subMsg model
+            Common.Calendar.Month.update subMsg model
 
 
 view : Model -> Html Msg
@@ -32,6 +32,6 @@ view model =
         [ class "page", id "home" ]
         [ h1 [] [ text "home" ]
         , div []
-            [ Html.map ClickDateMsg (Common.Calendar.Week.view model)
+            [ Html.map ClickDateMsg (Common.Calendar.Month.view model)
             ]
         ]

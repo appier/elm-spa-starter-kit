@@ -7,8 +7,8 @@ import Html.Events exposing (onClick)
 import Common.Calendar.Model exposing (CalendarDate)
 
 
-type Model
-    = CalendarDate
+type alias Model =
+    CalendarDate
 
 
 type Msg
@@ -61,4 +61,4 @@ view model =
     in
         div
             [ class className, onClick OnClick ]
-            [ text (toString (Date.day (model.date))), text (toString model.isSelected) ]
+            [ text (toString (Date.day (model.date))) ]
