@@ -3,14 +3,13 @@ module Page.Home.View exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Common.Calendar.Month exposing (..)
-import Common.Calendar.Model exposing (Month)
 
 
 type alias Model =
-    Month
+    Common.Calendar.Month.Model
 
 
-model : Month
+model : Model
 model =
     Common.Calendar.Month.model
 

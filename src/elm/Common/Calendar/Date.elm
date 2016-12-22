@@ -16,10 +16,6 @@ type Msg
     = OnClick
 
 
-
--- onClick OnClick model.date
-
-
 update : Msg -> CalendarDate -> CalendarDate
 update message model =
     case message of
