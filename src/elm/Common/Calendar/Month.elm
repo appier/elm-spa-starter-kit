@@ -4,8 +4,9 @@ import Html exposing (..)
 import Svg exposing (svg, g, polygon)
 import Svg.Attributes exposing (viewBox, x, y, width, height, points)
 import Html.Attributes exposing (class, style)
+import Html.Events exposing (onClick)
 import Common.Calendar.Date exposing (..)
-import Common.Calendar.Model exposing (Month, Week, CalendarDate, dayFromSunDay, getWeekDayStr, weekDays)
+import Common.Calendar.Model exposing (Month, Week, CalendarDate, dayFromSunDay, getWeekDayStr, getMonthStr, weekDays)
 import Time.Date exposing (Date, Weekday, date, addMonths, addDays, weekday, daysInMonth)
 
 
@@ -114,6 +115,8 @@ model =
 
 type Msg
     = ClickDateMsg CalendarDate Common.Calendar.Date.Msg
+    | PrevMonth
+    | NextMonth
 
 
 update : Msg -> Model -> Model
@@ -121,6 +124,38 @@ update message model =
     case message of
         ClickDateMsg calendarDate subMsg ->
             { model | selectedDate = Just calendarDate.date }
+
+        PrevMonth ->
+            let
+                month =
+                    if model.month == 1 then
+                        12
+                    else
+                        model.month - 1
+
+                year =
+                    if model.month == 1 then
+                        model.year - 1
+                    else
+                        model.year
+            in
+                { model | month = month, year = year }
+
+        NextMonth ->
+            let
+                month =
+                    if model.month == 12 then
+                        1
+                    else
+                        model.month + 1
+
+                year =
+                    if model.month == 12 then
+                        model.year + 1
+                    else
+                        model.year
+            in
+                { model | month = month, year = year }
 
 
 view : Model -> Html Msg
@@ -145,7 +180,7 @@ view model =
                 ]
     in
         div [ class "mf-cal", style [ ( "width", "400px" ) ] ]
-            [ renderHead "Dec"
+            [ renderHead ((getMonthStr model.month ++ " " ++ toString model.year))
             , div
                 [ class "cal-month" ]
                 [ div [ class "cal-month-head" ]
@@ -165,7 +200,11 @@ renderHead : String -> Html Msg
 renderHead monStr =
     div
         [ class "cal-header" ]
-        [ div [ class "nav-btn prev" ]
+        [ div
+            [ class "nav-btn prev"
+            , onClick
+                PrevMonth
+            ]
             [ svg
                 [ x "0"
                 , y "0"
@@ -180,7 +219,11 @@ renderHead monStr =
             ]
         , div [ class "date" ]
             [ text monStr ]
-        , div [ class "nav-btn next" ]
+        , div
+            [ class "nav-btn next"
+            , onClick
+                NextMonth
+            ]
             [ svg
                 [ x "0"
                 , y "0"

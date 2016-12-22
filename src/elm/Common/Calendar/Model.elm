@@ -71,6 +71,49 @@ dayFromSunDay weekDay =
             0
 
 
+getMonthStr : Int -> String
+getMonthStr month =
+    case month of
+        1 ->
+            "Jan"
+
+        2 ->
+            "Feb"
+
+        3 ->
+            "Mar"
+
+        4 ->
+            "Apr"
+
+        5 ->
+            "May"
+
+        6 ->
+            "Jun"
+
+        7 ->
+            "Jul"
+
+        8 ->
+            "Aug"
+
+        9 ->
+            "Sep"
+
+        10 ->
+            "Oct"
+
+        11 ->
+            "Nov"
+
+        12 ->
+            "Dec"
+
+        _ ->
+            "Not Legal Month"
+
+
 weekDays : List Weekday
 weekDays =
     [ Time.Date.Sun
