@@ -14,38 +14,57 @@ import Date exposing (fromTime)
 import Debug exposing (..)
 
 
-createCalendarDateByDate : Maybe Date -> Date -> CalendarDate
-createCalendarDateByDate selectedDate date =
+compareDateWithMaybeDate : Maybe Date -> Date -> Bool
+compareDateWithMaybeDate maybeDate testDate =
+    case maybeDate of
+        Just hasDate ->
+            Time.Date.year hasDate
+                == Time.Date.year testDate
+                && Time.Date.month hasDate
+                == Time.Date.month testDate
+                && Time.Date.day hasDate
+                == Time.Date.day testDate
+
+        Nothing ->
+            False
+
+
+createCalendarDateByDate : Maybe Date -> Maybe Date -> Date -> CalendarDate
+createCalendarDateByDate today selectedDate date =
     let
         isSelected =
-            case selectedDate of
-                Just sDate ->
-                    Time.Date.year sDate
-                        == Time.Date.year date
-                        && Time.Date.month sDate
-                        == Time.Date.month date
-                        && Time.Date.day sDate
-                        == Time.Date.day date
+            compareDateWithMaybeDate selectedDate date
 
-                Nothing ->
+        isToday =
+            compareDateWithMaybeDate today date
+
+        isHoliday =
+            case weekday date of
+                Time.Date.Sat ->
+                    True
+
+                Time.Date.Sun ->
+                    True
+
+                _ ->
                     False
     in
         { date = date
-        , isHoliday = False
+        , isHoliday = isHoliday
         , isAvailable = True
         , isSelected = isSelected
-        , isToday = False
+        , isToday = isToday
         , isInMonthRange = True
         }
 
 
-generateWeekListByDate : Maybe Date -> Date -> Week
-generateWeekListByDate selectedDate date =
+generateWeekListByDate : Maybe Date -> Maybe Date -> Date -> Week
+generateWeekListByDate today selectedDate date =
     List.map
         (\x ->
             x
                 |> flip addDays date
-                |> createCalendarDateByDate selectedDate
+                |> createCalendarDateByDate today selectedDate
         )
         (List.range 0 6)
 
@@ -95,21 +114,11 @@ getMonthModelByYearAndMonth model =
         weeks =
             List.map
                 (\x ->
-                    generateWeekListByDate model.selectedDate (addDays ((x - 1) * 7) firstDate)
+                    generateWeekListByDate model.today model.selectedDate (addDays ((x - 1) * 7) firstDate)
                 )
                 (List.range 1 weekNum)
     in
         weeks
-
-
-main : Program Never Model Msg
-main =
-    Html.program
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
 
 
 type alias Model =
@@ -123,11 +132,6 @@ type alias Model =
 init : ( Model, Cmd Msg )
 init =
     ( model, Task.perform NewTime Time.now )
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
 
 
 model : Model
@@ -196,9 +200,9 @@ update message model =
 
                 today : Date
                 today =
-                    date (Date.year dateByNow) (getMonthNumber (Date.month dateByNow)) (Date.year dateByNow)
+                    date (Date.year dateByNow) (getMonthNumber (Date.month dateByNow)) (Date.day dateByNow)
             in
-                log (Time.Date.toISO8601 today)
+                log (toString dateByNow)
                     ( { model | today = Just today }, Cmd.none )
 
 

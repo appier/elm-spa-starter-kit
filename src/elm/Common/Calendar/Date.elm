@@ -30,9 +30,21 @@ update message model =
 getDateDomClassName : CalendarDate -> String
 getDateDomClassName model =
     let
+        todayClassName =
+            if model.isToday then
+                " today"
+            else
+                ""
+
         selectedClassName =
             if model.isSelected then
                 " selected"
+            else
+                ""
+
+        holidayClassName =
+            if model.isHoliday then
+                " holiday"
             else
                 ""
 
@@ -48,7 +60,12 @@ getDateDomClassName model =
             else
                 ""
     in
-        "cal-date" ++ selectedClassName ++ availableClassName ++ inMonthClassName
+        "cal-date"
+            ++ todayClassName
+            ++ selectedClassName
+            ++ holidayClassName
+            ++ availableClassName
+            ++ inMonthClassName
 
 
 

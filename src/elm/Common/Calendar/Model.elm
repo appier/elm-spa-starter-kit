@@ -122,37 +122,37 @@ getMonthNumber month =
             1
 
         Date.Feb ->
-            1
+            2
 
         Date.Mar ->
-            1
+            3
 
         Date.Apr ->
-            1
+            4
 
         Date.May ->
-            1
+            5
 
         Date.Jun ->
-            1
+            6
 
         Date.Jul ->
-            1
+            7
 
         Date.Aug ->
-            1
+            8
 
         Date.Sep ->
-            1
+            9
 
         Date.Oct ->
-            1
+            10
 
         Date.Nov ->
-            1
+            11
 
         Date.Dec ->
-            1
+            12
 
 
 weekDays : List Weekday
