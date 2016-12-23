@@ -68,7 +68,11 @@ update msg model =
             )
 
         HomeMsg subMsg ->
-            ( { model | home = Page.Home.View.update subMsg model.home }, Cmd.none )
+            let
+                ( newHome, newMsg ) =
+                    Page.Home.View.update subMsg model.home
+            in
+                ( { model | home = newHome }, Cmd.map HomeMsg newMsg )
 
         Noop ->
             ( model, Cmd.none )

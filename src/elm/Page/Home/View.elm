@@ -18,11 +18,15 @@ type Msg
     = ClickDateMsg Common.Calendar.Month.Msg
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         ClickDateMsg subMsg ->
-            Common.Calendar.Month.update subMsg model
+            let
+                ( newModel, newMsg ) =
+                    Common.Calendar.Month.update subMsg model
+            in
+                ( newModel, Cmd.map ClickDateMsg newMsg )
 
 
 view : Model -> Html Msg

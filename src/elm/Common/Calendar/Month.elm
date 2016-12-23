@@ -1,13 +1,17 @@
 module Common.Calendar.Month exposing (..)
 
+import Task
 import Html exposing (..)
 import Svg exposing (svg, g, polygon)
 import Svg.Attributes exposing (viewBox, x, y, width, height, points)
 import Html.Attributes exposing (class, style)
 import Html.Events exposing (onClick)
 import Common.Calendar.Date exposing (..)
-import Common.Calendar.Model exposing (Month, Week, CalendarDate, dayFromSunDay, getWeekDayStr, getMonthStr, weekDays)
+import Common.Calendar.Model exposing (Month, Week, CalendarDate, dayFromSunDay, getWeekDayStr, getMonthNumber, getMonthStr, weekDays)
 import Time.Date exposing (Date, Weekday, date, addMonths, addDays, weekday, daysInMonth)
+import Time exposing (Time)
+import Date exposing (fromTime)
+import Debug exposing (..)
 
 
 createCalendarDateByDate : Maybe Date -> Date -> CalendarDate
@@ -98,16 +102,38 @@ getMonthModelByYearAndMonth model =
         weeks
 
 
+main : Program Never Model Msg
+main =
+    Html.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
 type alias Model =
     { selectedDate : Maybe Date
+    , today : Maybe Date
     , year : Int
     , month : Int
     }
 
 
+init : ( Model, Cmd Msg )
+init =
+    ( model, Task.perform NewTime Time.now )
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
 model : Model
 model =
     { selectedDate = Nothing
+    , today = Nothing
     , year = 2016
     , month = 12
     }
@@ -117,13 +143,15 @@ type Msg
     = ClickDateMsg CalendarDate Common.Calendar.Date.Msg
     | PrevMonth
     | NextMonth
+    | GetTimeAndThen
+    | NewTime Time
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message model =
     case message of
         ClickDateMsg calendarDate subMsg ->
-            { model | selectedDate = Just calendarDate.date }
+            ( { model | selectedDate = Just calendarDate.date }, Cmd.none )
 
         PrevMonth ->
             let
@@ -139,7 +167,7 @@ update message model =
                     else
                         model.year
             in
-                { model | month = month, year = year }
+                ( { model | month = month, year = year }, Cmd.none )
 
         NextMonth ->
             let
@@ -155,7 +183,23 @@ update message model =
                     else
                         model.year
             in
-                { model | month = month, year = year }
+                ( { model | month = month, year = year }, Cmd.none )
+
+        GetTimeAndThen ->
+            ( model, Task.perform NewTime Time.now )
+
+        NewTime time ->
+            let
+                dateByNow : Date.Date
+                dateByNow =
+                    (fromTime time)
+
+                today : Date
+                today =
+                    date (Date.year dateByNow) (getMonthNumber (Date.month dateByNow)) (Date.year dateByNow)
+            in
+                log (Time.Date.toISO8601 today)
+                    ( { model | today = Just today }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -182,7 +226,7 @@ view model =
         div [ class "mf-cal", style [ ( "width", "400px" ) ] ]
             [ renderHead ((getMonthStr model.month ++ " " ++ toString model.year))
             , div
-                [ class "cal-month" ]
+                [ class "cal-month", onClick GetTimeAndThen ]
                 [ div [ class "cal-month-head" ]
                     [ div
                         [ class "cal-week" ]

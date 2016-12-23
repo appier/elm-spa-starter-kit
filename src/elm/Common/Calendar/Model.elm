@@ -1,5 +1,6 @@
 module Common.Calendar.Model exposing (..)
 
+import Date
 import Time.Date exposing (Date, Weekday)
 
 
@@ -112,6 +113,46 @@ getMonthStr month =
 
         _ ->
             "Not Legal Month"
+
+
+getMonthNumber : Date.Month -> Int
+getMonthNumber month =
+    case month of
+        Date.Jan ->
+            1
+
+        Date.Feb ->
+            1
+
+        Date.Mar ->
+            1
+
+        Date.Apr ->
+            1
+
+        Date.May ->
+            1
+
+        Date.Jun ->
+            1
+
+        Date.Jul ->
+            1
+
+        Date.Aug ->
+            1
+
+        Date.Sep ->
+            1
+
+        Date.Oct ->
+            1
+
+        Date.Nov ->
+            1
+
+        Date.Dec ->
+            1
 
 
 weekDays : List Weekday
